@@ -7,7 +7,7 @@ turnstile = Statemachine.build do
 end
 
 
-
+## Figure 1: Subway Turnstile
 puts turnstile.state
 turnstile.coin
 puts turnstile.state
