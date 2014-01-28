@@ -1,0 +1,12 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rake (10.1.1)
+    statemachine (2.2.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rake
+  statemachine

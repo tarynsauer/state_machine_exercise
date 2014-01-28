@@ -1,0 +1,15 @@
+require 'rubygems'
+require 'statemachine'
+
+turnstile = Statemachine.build do
+  trans :locked, :coin, :unlocked
+  trans :unlocked, :pass, :locked
+end
+
+
+
+puts turnstile.state
+turnstile.coin
+puts turnstile.state
+turnstile.pass  
+puts turnstile.state
