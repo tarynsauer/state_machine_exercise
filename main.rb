@@ -2,10 +2,11 @@ require 'rubygems'
 require 'statemachine'
 
 class TurnstileContext
-  attr_accessor :thank_you_light, :alarm, :history
+  attr_accessor :thank_you_light, :lock, :alarm, :history
 
   def initialize
-    @thank_you_light = false 
+    @thank_you_light = false
+    @lock = true
     @alarm = false 
     @history = {}
   end
@@ -28,7 +29,7 @@ class TurnstileContext
 
   def thank_you_light_on
     thank_you_light = true 
-    puts "Thank you light ON'"
+    puts "Thank you light ON"
   end
 
   def thank_you_light_off
@@ -40,22 +41,16 @@ class TurnstileContext
     puts "--Testing--"
   end
 
-  def set_history_pseduo_state
-    puts "Entering diagnostic mode"
-    #history[:state] = self.state 
-    #history[:alarm] = alarm 
-    #history[:light] = thank_you_light 
+  def saves_device_states
+    history[:state] = lock
+    history[:thank_you_light] = thank_you_light
+    history[:alarm] = alarm
   end
 
-  def get_history_pseudo_state
-    self.state = history[:state]
-    alarm = history[:alarm]
-    thank_you_light = history[:light]
-    history = {}
-  end
 end
 
 turnstile = Statemachine.build do
+ 
   superstate :normal_mode do
     trans :locked, :coin, :unlocked, :thank_you
     trans :unlocked, :pass, :locked
@@ -71,6 +66,8 @@ turnstile = Statemachine.build do
   context TurnstileContext.new
 
   superstate :diagnostic_mode do
+    on_entry :saves_device_states
+    
     trans :test_coin, :coin, :test_pass, :thank_you_light_on
     trans :test_pass, :pass, :test_coin, :thank_you_light_off
 
@@ -84,7 +81,6 @@ turnstile = Statemachine.build do
   end
 
 end
-
 
 ## Figure 4: Turnstile with Diagnostic Mode. 
 puts turnstile.state
@@ -103,11 +99,5 @@ turnstile.pass
 turnstile.reset
 puts turnstile.state
 
-
 turnstile.diagnose
-turnstile.coin
-puts turnstile.state
-turnstile.test_lock
-turnstile.reset
-
 puts turnstile.state
